@@ -21,7 +21,7 @@ jobs:
       - name: Test SiliconFlow API
         env:
           # 从保险库读取新 Key
-          SILICONFLOW_API_KEY: ${{ sk-pkmnwpjvwrfzutvtoifkffycccpsitcflpdbxixigzqkpkfc }}
+          SILICONFLOW_API_KEY: ${{ secrets.SILICONFLOW_API_KEY }}
         run: |
           python -c "
           import os
