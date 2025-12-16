@@ -1,1 +1,54 @@
+name: siliconflow Connection Test
+
+# 触发机制：手动触发 (点击按钮)
+on:
+  workflow_dispatch:
+
+jobs:
+  test-ignition:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install Dependencies
+        run: pip install openai
+
+      - name: Test siliconflow API
+        env:
+          # 这里引用您刚才设置的 Secret
+          siliconflow_API_KEY: ${{sk-pkmnwpjvwrfzutvtoifkffycccpsitcflpdbxixigzqkpkfc}}
+        run: |
+          python -c "
+          import os
+          from openai import OpenAI
+
+          # 配置 siliconflow 客户端
+          client = OpenAI(
+              api_key=os.environ.get('siliconflow_API_KEY'),
+              base_url='https://api.siliconflow.cn'  # 关键：指向 siliconflow
+          )
+
+          print('📡 正在呼叫 siliconflow...')
+          
+          try:
+              response = client.chat.completions.create(
+                  model='siliconflow-chat',
+                  messages=[
+                      {'role': 'system', 'content': 'You are a philosophical AI.'},
+                      {'role': 'user', 'content': '用简短的中文解释：什么是递归？'},
+                  ],
+                  stream=False
+              )
+              print('✅ 连接成功！收到回复：')
+              print(response.choices[0].message.content)
+          except Exception as e:
+              print(f'❌ 连接失败: {e}')
+              exit(1)
+          "
 
