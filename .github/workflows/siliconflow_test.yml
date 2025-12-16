@@ -1,11 +1,10 @@
-name: siliconflow Connection Test
+name: SiliconFlow Connection Test
 
-# 触发机制：手动触发 (点击按钮)
 on:
   workflow_dispatch:
 
 jobs:
-  test-ignition:
+  test-siliconflow:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -19,36 +18,42 @@ jobs:
       - name: Install Dependencies
         run: pip install openai
 
-      - name: Test siliconflow API
+      - name: Test SiliconFlow API
         env:
-          # 这里引用您刚才设置的 Secret
-          siliconflow_API_KEY: ${{sk-pkmnwpjvwrfzutvtoifkffycccpsitcflpdbxixigzqkpkfc}}
+          # 从保险库读取新 Key
+          SILICONFLOW_API_KEY: ${{ sk-pkmnwpjvwrfzutvtoifkffycccpsitcflpdbxixigzqkpkfc }}
         run: |
           python -c "
           import os
           from openai import OpenAI
 
-          # 配置 siliconflow 客户端
+          # 配置 SiliconFlow 客户端
+          # 注意：SiliconFlow 的标准入口通常需要加 /v1
           client = OpenAI(
-              api_key=os.environ.get('siliconflow_API_KEY'),
-              base_url='https://api.siliconflow.cn'  # 关键：指向 siliconflow
+              api_key=os.environ.get('SILICONFLOW_API_KEY'),
+              base_url='https://api.siliconflow.cn/' 
           )
 
-          print('📡 正在呼叫 siliconflow...')
+          print('🚀 正在呼叫 SiliconFlow 节点...')
           
           try:
+              # SiliconFlow 需要准确的模型名称，DeepSeek V3 的全名通常是这个：
               response = client.chat.completions.create(
-                  model='siliconflow-chat',
+                  model='deepseek-ai/DeepSeek-V3.2', 
                   messages=[
-                      {'role': 'system', 'content': 'You are a philosophical AI.'},
-                      {'role': 'user', 'content': '用简短的中文解释：什么是递归？'},
+                      {'role': 'system', 'content': 'You are a logic engine.'},
+                      {'role': 'user', 'content': '请简述：什么是“第一性原理”？'},
                   ],
                   stream=False
               )
-              print('✅ 连接成功！收到回复：')
+              print('✅ 连接成功！收到 SiliconFlow 回复：')
+              print('-' * 30)
               print(response.choices[0].message.content)
+              print('-' * 30)
           except Exception as e:
               print(f'❌ 连接失败: {e}')
+              # 如果是模型名称错误，打印提示
+              if 'model' in str(e):
+                  print('提示：请检查 SiliconFlow 官网确认最新的模型名称 (Model ID)。')
               exit(1)
           "
-
