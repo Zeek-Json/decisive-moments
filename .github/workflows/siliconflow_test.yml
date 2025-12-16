@@ -42,7 +42,7 @@ jobs:
                   model='deepseek-ai/DeepSeek-V3.2', 
                   messages=[
                       {'role': 'system', 'content': 'You are a logic engine.'},
-                      {'role': 'user', 'content': '请简述：什么是“第一性原理”？'},
+                      {'role': 'user', 'content': '请简述：什么是“量子物理”？'},
                   ],
                   stream=False
               )
